@@ -39,6 +39,10 @@
 		eventMarkers.push(marker);
 		eventMarkers = eventMarkers;
 	};
+	const deleteMarker = (index: number) => {
+		eventMarkers.splice(index, 1);
+		eventMarkers = eventMarkers;
+	};
 </script>
 
 <div class="timeline" style="--zoom:{zoom}; --duration:{duration}; --bar-spacing:{barSpacing}">
@@ -83,6 +87,7 @@
 							const delta = (polarity * 10) / zoom;
 							eventMarkers[index].time += delta;
 						}}
+						on:delete={() => deleteMarker(index)}
 					/>
 				</div>
 			{/each}

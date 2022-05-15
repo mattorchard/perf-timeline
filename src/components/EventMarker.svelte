@@ -3,7 +3,10 @@
 
 	import { createEventDispatcher } from 'svelte';
 
-	const dispatch = createEventDispatcher<{ move: { direction: 'earlier' | 'later' } }>();
+	const dispatch = createEventDispatcher<{
+		move: { direction: 'earlier' | 'later' };
+		delete: void;
+	}>();
 
 	export let name: string;
 	export let time: number;
@@ -23,11 +26,15 @@
 				event.preventDefault();
 				dispatch('move', { direction: 'later' });
 				break;
+			case 'Delete':
+			case 'Backspace':
+				dispatch('delete');
+				break;
 		}
 	}}
 >
-	<span title="Name" class="marker-name">{name}</span>
-	<span title="Time">{formatTime(time)}</span>
+	<span aria-label="Name" class="marker-name">{name}</span>
+	<span aria-label="Time">{formatTime(time)}</span>
 </button>
 
 <style>
