@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { loop_guard } from 'svelte/internal';
+
 	import { formatTime } from '../helpers/timeHelpers';
 	import EventMarker from './EventMarker.svelte';
 
@@ -81,6 +83,11 @@
 						name={marker.name}
 						time={marker.time}
 						on:click={() => onSeek(marker.time)}
+						on:dblclick={() => {
+							const name = window.prompt('New name');
+							if (!name) return;
+							eventMarkers[index].name = name;
+						}}
 						on:move={(event) => {
 							const { direction } = event.detail;
 							const polarity = direction === 'later' ? 1 : -1;
