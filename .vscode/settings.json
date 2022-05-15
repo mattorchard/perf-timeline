@@ -1,0 +1,10 @@
+{
+	"typescript.preferences.importModuleSpecifier": "relative",
+	"javascript.preferences.importModuleSpecifier": "relative",
+	"search.exclude": {
+		".svelte-kit/**": true
+	},
+	"files.exclude": {
+		".svelte-kit/**": true
+	}
+}
