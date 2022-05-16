@@ -189,7 +189,7 @@
 		bottom: 0;
 		left: calc(1px * var(--zoom) * var(--time));
 		width: 0.25rem;
-		background-color: var(--color-accent);
+		background-color: var(--color-highlight);
 	}
 	.ticker-tape:active .playhead {
 		left: calc(1px * var(--zoom) * var(--pointer-time));
@@ -223,7 +223,7 @@
 		top: 0;
 		left: calc(1px * var(--zoom) * var(--start));
 		width: calc(1px * var(--zoom) * var(--duration));
-		border: 0.125rem dashed var(--color-accent);
+		border: 0.125rem dashed var(--color-highlight);
 		top: calc(1.5rem + 2.5rem * var(--index));
 	}
 </style>

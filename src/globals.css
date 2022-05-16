@@ -1,13 +1,14 @@
 :root {
-	--color-dark: #012622;
-	--color-mid: #003b36;
-	--color-light: #439a86;
+	--color-dark: #000f27;
+	--color-mid: #00143c;
+	--color-light: #406c9c;
 	--color-text: #f0f0f8e0;
-	--color-accent: #cf5c36;
+	--color-highlight: gold;
+	--color-accent: #992099;
 	--lighten: #ffffff40;
 	--darken: #00000040;
 	color-scheme: dark;
-	accent-color: var(--color-accent);
+	accent-color: var(--color-light);
 }
 
 * {
@@ -38,7 +39,7 @@ body {
 	background-color: var(--color-mid);
 }
 button {
-	background-color: var(--color-accent);
+	background-color: var(--color-light);
 }
 button:enabled {
 	cursor: pointer;
