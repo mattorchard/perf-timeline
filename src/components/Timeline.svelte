@@ -3,6 +3,7 @@
 
 	import { formatTime } from '../helpers/timeHelpers';
 	import EventMarker from './EventMarker.svelte';
+	import MarkerDeltaBounds from './MarkerDeltaBounds.svelte';
 
 	export let duration: number;
 	export let currentTime: number;
@@ -13,6 +14,7 @@
 
 	let scrollX = 0;
 	let pointerClientX = 0;
+	let depressedMarkerIndex: number | null = null;
 
 	$: pointerTime = (scrollX + pointerClientX) / zoom;
 
@@ -37,14 +39,38 @@
 		time: number;
 	}
 	let eventMarkers: EventMarker[] = [];
+
+	interface MarkerDelta {
+		sourceIndex: number;
+		targetIndex: number;
+	}
+
+	let markerDeltas: MarkerDelta[] = [];
+
 	const addMarker = (marker: EventMarker) => {
 		eventMarkers.push(marker);
 		eventMarkers = eventMarkers;
 	};
-	const deleteMarker = (index: number) => {
-		eventMarkers.splice(index, 1);
-		eventMarkers = eventMarkers;
+
+	const addMarkerDelta = (sourceIndex: number, targetIndex: number) => {
+		markerDeltas.push({ sourceIndex, targetIndex });
+		markerDeltas = markerDeltas;
 	};
+
+	const deleteMarker = (indexToDelete: number) => {
+		markerDeltas = markerDeltas.filter(
+			(delta) => delta.sourceIndex !== indexToDelete && delta.targetIndex !== indexToDelete
+		);
+		eventMarkers = eventMarkers.filter((_, index) => index !== indexToDelete);
+	};
+
+	const getDeltaIndicator = (markerTime: number, pointerTime: number) => {
+		const start = Math.min(pointerTime, markerTime);
+		const end = Math.max(pointerTime, markerTime);
+		return { start, end, duration: end - start };
+	};
+	$: depressedMarker = depressedMarkerIndex === null ? null : eventMarkers[depressedMarkerIndex];
+	$: deltaIndicator = depressedMarker && getDeltaIndicator(depressedMarker.time, pointerTime);
 </script>
 
 <div class="timeline" style="--zoom:{zoom}; --duration:{duration}; --bar-spacing:{barSpacing}">
@@ -95,14 +121,38 @@
 							eventMarkers[index].time += delta;
 						}}
 						on:delete={() => deleteMarker(index)}
+						on:pointerdown={() => (depressedMarkerIndex = index)}
+						on:pointerup={() => {
+							if (depressedMarkerIndex == null) return;
+							if (index === depressedMarkerIndex) return;
+							addMarkerDelta(depressedMarkerIndex, index);
+						}}
 					/>
 				</div>
 			{/each}
+
+			{#each markerDeltas as { sourceIndex, targetIndex }}
+				<MarkerDeltaBounds
+					{sourceIndex}
+					{targetIndex}
+					sourceTime={eventMarkers[sourceIndex].time}
+					targetTime={eventMarkers[targetIndex].time}
+				/>
+			{/each}
+
+			{#if depressedMarkerIndex !== null}
+				<div
+					class="marker-delta-indicator"
+					style="--start: {deltaIndicator?.start}; --duration: {deltaIndicator?.duration}; --index: {depressedMarkerIndex}"
+				/>
+			{/if}
 
 			<div class="end-indicator">End</div>
 		</div>
 	</div>
 </div>
+
+<svelte:window on:pointerup={() => (depressedMarkerIndex = null)} />
 
 <style>
 	.timeline {
@@ -130,7 +180,8 @@
 		position: relative;
 		width: calc(1px * var(--zoom) * var(--duration));
 		height: calc(var(--marker-count) * 2.5rem + 1rem);
-		min-height: 5rem;
+		min-height: 7rem;
+		transition: height 0.2s ease-in-out;
 	}
 	.playhead {
 		position: absolute;
@@ -150,7 +201,7 @@
 		writing-mode: vertical-lr;
 	}
 	.ticker-tape {
-		--bar-width: 0.5rem;
+		--bar-width: 0.25rem;
 		--bar-pattern-width: calc(1px * var(--zoom) * var(--bar-spacing));
 		--bar-color: var(--lighten);
 		background-image: repeating-linear-gradient(
@@ -165,5 +216,14 @@
 		position: absolute;
 		top: calc(0.5rem + 2.5rem * var(--index));
 		left: calc(1px * var(--zoom) * var(--time));
+	}
+	.marker-delta-indicator {
+		pointer-events: none;
+		position: absolute;
+		top: 0;
+		left: calc(1px * var(--zoom) * var(--start));
+		width: calc(1px * var(--zoom) * var(--duration));
+		border: 0.125rem dashed var(--color-accent);
+		top: calc(1.5rem + 2.5rem * var(--index));
 	}
 </style>

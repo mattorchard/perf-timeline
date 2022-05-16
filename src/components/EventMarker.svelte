@@ -17,6 +17,8 @@
 	class="event-marker"
 	on:click
 	on:dblclick
+	on:pointerdown
+	on:pointerup
 	on:keydown={(event) => {
 		switch (event.key) {
 			case 'ArrowLeft':
