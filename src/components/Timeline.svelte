@@ -97,7 +97,9 @@
 							const { direction } = event.detail;
 							const polarity = direction === 'later' ? 1 : -1;
 							const delta = (polarity * 10) / zoom;
-							editMarker({ id: marker.id, time: marker.time + delta });
+							const newTime = marker.time + delta;
+							editMarker({ id: marker.id, time: newTime });
+							onSeek(newTime);
 						}}
 						on:delete={() => deleteMarker(marker.id)}
 						on:pointerdown={() => {
