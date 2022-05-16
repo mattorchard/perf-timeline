@@ -6,6 +6,7 @@
 		addMarkerDelta,
 		deleteMarker,
 		editMarker,
+		deleteDelta,
 		type ActionMarker
 	} from '../stores/TimelineStore';
 
@@ -115,12 +116,13 @@
 				</div>
 			{/each}
 
-			{#each $deltas as { source, target, sourceIndex, targetIndex }}
+			{#each $deltas as { id, source, target, sourceIndex, targetIndex }}
 				<MarkerDeltaBounds
 					{sourceIndex}
 					{targetIndex}
 					sourceTime={source.time}
 					targetTime={target.time}
+					on:delete={() => deleteDelta(id)}
 				/>
 			{/each}
 

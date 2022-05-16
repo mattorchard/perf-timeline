@@ -53,6 +53,9 @@ export const deleteMarker = (idToDelete: string) => {
 	markerStore.update((m) => filterObject(m, ([id]) => id !== idToDelete));
 };
 
+export const deleteDelta = (idToDelete: string) =>
+	deltaStore.update((d) => filterObject(d, ([id]) => id !== idToDelete));
+
 export const markers = derived(markerStore, ($markerStore) => Object.values($markerStore));
 
 export const deltas = derived([deltaStore, markerStore], ([$deltaStore, $markerStore]) => {

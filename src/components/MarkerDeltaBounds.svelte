@@ -1,10 +1,13 @@
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte';
 	import { formatTime } from '../helpers/timeHelpers';
 
 	export let sourceIndex: number;
 	export let targetIndex: number;
 	export let sourceTime: number;
 	export let targetTime: number;
+
+	const dispatch = createEventDispatcher<{ delete: void }>();
 
 	$: isNorth = sourceIndex < targetIndex === sourceTime < targetTime;
 
@@ -23,16 +26,28 @@
 	--min-index: {minIndex};
 	--delta-index: {maxIndex - minIndex};"
 >
-	<span>
+	<button
+		type="button"
+		on:click
+		on:keydown={(e) => {
+			switch (e.key) {
+				case 'Backspace':
+				case 'Delete':
+					dispatch('delete');
+					break;
+			}
+		}}
+	>
 		{formatTime(maxTime - minTime)}
-	</span>
+	</button>
 </div>
 
 <style>
 	.marker-delta {
 		pointer-events: none;
 		position: absolute;
-		border: 0.25rem dashed var(--color-accent);
+		--bg-color: var(--color-accent);
+		border: 0.25rem dashed var(--bg-color);
 		top: calc(0.125rem + 1.5rem + 2.5rem * var(--min-index));
 		height: calc(2.5rem * var(--delta-index));
 
@@ -51,8 +66,17 @@
 		border-bottom-width: 0px;
 		align-items: flex-start;
 	}
-	span {
-		background-color: var(--color-accent);
+	button {
+		pointer-events: all;
+		background-color: var(--bg-color);
 		padding: 0.25rem;
+	}
+
+	.marker-delta:focus-within {
+		z-index: 100;
+		--bg-color: var(--color-highlight);
+	}
+	button:focus {
+		color: black;
 	}
 </style>

@@ -36,7 +36,7 @@
 		}
 	}}
 >
-	<span aria-label="Name" class="marker-name">{name}</span>
+	<em aria-label="Name" class="marker-name">{name}</em>
 	<span aria-label="Time">{formatTime(time)}</span>
 </button>
 
@@ -65,13 +65,14 @@
 		right: 100%;
 	}
 	.event-marker:focus-within {
-		--bg-color: var(--color-accent);
+		--bg-color: var(--color-highlight);
+		color: black;
 	}
 
 	.event-marker:hover {
 		filter: brightness(1.15);
 	}
 	.event-marker:active {
-		box-shadow: 0 0 0 0.125rem var(--color-highlight) inset;
+		filter: brightness(0.85);
 	}
 </style>
