@@ -53,6 +53,7 @@
 		min-width: 4rem;
 		padding: 0.5rem;
 		gap: 1rem;
+		transition: filter 0.2s ease-in-out;
 	}
 	.event-marker::before {
 		content: '';
@@ -65,5 +66,12 @@
 	}
 	.event-marker:focus-within {
 		--bg-color: var(--color-accent);
+	}
+
+	.event-marker:hover {
+		filter: brightness(1.15);
+	}
+	.event-marker:active {
+		box-shadow: 0 0 0 0.125rem var(--color-highlight) inset;
 	}
 </style>
