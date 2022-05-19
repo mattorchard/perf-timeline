@@ -24,19 +24,19 @@
 	let zoomExponent = 2;
 	let zoom = 10 ** zoomExponent;
 
-	function setZoom(newZoomExponent: number) {
-		zoomExponent = newZoomExponent;
+	function onZoomExponentChange() {
 		const newZoom = 10 ** zoomExponent;
-		const zoomRatio = newZoom / zoom;
 
 		if (scrollContainer) {
-			console.log({ zoomRatio });
+			const zoomRatio = newZoom / zoom;
 			const zoomOffset = windowWidth / 2;
 			const oldScroll = scrollContainer.scrollLeft;
 			scrollContainer.scrollLeft = (oldScroll + zoomOffset) * zoomRatio - zoomOffset;
 		}
 		zoom = newZoom;
 	}
+
+	$: zoomExponent, onZoomExponentChange();
 
 	let scrollX = 0;
 	let pointerClientX = 0;
@@ -75,14 +75,7 @@
 	<dl class="toolbar">
 		<dt>Zoom</dt>
 		<dd>
-			<input
-				type="range"
-				min={0.1}
-				step={0.1}
-				max={4}
-				value={zoomExponent}
-				on:change={(e) => setZoom(Number(e.currentTarget.value) || 0)}
-			/>
+			<input type="range" min={0.1} step={0.1} max={4} bind:value={zoomExponent} />
 		</dd>
 		<dt>Actions</dt>
 		<dd>
@@ -155,10 +148,10 @@
 				<div
 					class="marker-delta-indicator"
 					style="
-						--start: {deltaIndicator.start};
-						--duration: {deltaIndicator.duration};
-						--index: {depressedMarkerIndex}
-					"
+            --start: {deltaIndicator.start};
+            --duration: {deltaIndicator.duration};
+            --index: {depressedMarkerIndex}
+          "
 				/>
 			{/if}
 
