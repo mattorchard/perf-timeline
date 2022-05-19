@@ -18,8 +18,25 @@
 	export let currentTime: number;
 	export let onSeek: (time: number) => void;
 
+	let scrollContainer: HTMLDivElement | null = null;
+	let windowWidth = 0;
+
 	let zoomExponent = 2;
-	$: zoom = 10 ** zoomExponent;
+	let zoom = 10 ** zoomExponent;
+
+	function setZoom(newZoomExponent: number) {
+		zoomExponent = newZoomExponent;
+		const newZoom = 10 ** zoomExponent;
+		const zoomRatio = newZoom / zoom;
+
+		if (scrollContainer) {
+			console.log({ zoomRatio });
+			const zoomOffset = windowWidth / 2;
+			const oldScroll = scrollContainer.scrollLeft;
+			scrollContainer.scrollLeft = (oldScroll + zoomOffset) * zoomRatio - zoomOffset;
+		}
+		zoom = newZoom;
+	}
 
 	let scrollX = 0;
 	let pointerClientX = 0;
@@ -58,7 +75,14 @@
 	<dl class="toolbar">
 		<dt>Zoom</dt>
 		<dd>
-			<input type="range" min={0.1} step={0.1} max={4} bind:value={zoomExponent} />
+			<input
+				type="range"
+				min={0.1}
+				step={0.1}
+				max={4}
+				value={zoomExponent}
+				on:change={(e) => setZoom(Number(e.currentTarget.value) || 0)}
+			/>
 		</dd>
 		<dt>Actions</dt>
 		<dd>
@@ -77,6 +101,7 @@
 	<div
 		class="ticker-scroll"
 		style="--pointer-time: {pointerTime}"
+		bind:this={scrollContainer}
 		on:scroll={(e) => (scrollX = e.currentTarget.scrollLeft)}
 		on:pointermove={(e) => (pointerClientX = e.clientX)}
 		on:pointerup={() => onSeek(pointerTime)}
@@ -147,6 +172,7 @@
 		depressedMarker = null;
 		depressedMarkerIndex = null;
 	}}
+	bind:innerWidth={windowWidth}
 />
 
 <style>
