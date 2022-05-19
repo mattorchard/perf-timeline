@@ -53,7 +53,7 @@
 		min-width: 4rem;
 		padding: 0.5rem;
 		gap: 1rem;
-		transition: filter 0.2s ease-in-out;
+		transition: filter var(--trans);
 	}
 	.event-marker::before {
 		content: '';

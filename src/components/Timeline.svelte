@@ -195,7 +195,7 @@
 		width: calc(1px * var(--zoom) * var(--duration));
 		height: calc(var(--marker-count) * 2.5rem + 1rem);
 		min-height: 7rem;
-		transition: height 0.2s ease-in-out;
+		transition: height var(--trans);
 	}
 	.playhead {
 		position: absolute;
