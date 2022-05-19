@@ -11,7 +11,7 @@
 	let currentTime = 0;
 
 	let videoContainerSize = { width: 0, height: 0 };
-	$: videoShrinkerSize = getBestSize(videoContainerSize, videoDetails);
+	$: videoShrinkerSize = getBestSize(videoContainerSize, videoDetails, 32);
 </script>
 
 <main>
@@ -57,6 +57,7 @@
 		margin: auto;
 		overflow: hidden;
 	}
+
 	.timeline-container {
 		max-width: 100vw;
 	}

@@ -29,9 +29,9 @@ interface Size {
 	height: number;
 }
 
-export const getBestSize = (containerSize: Size, mediaSize: Size): Size => {
-	const hScale = containerSize.height / mediaSize.height;
-	const wScale = containerSize.width / mediaSize.width;
+export const getBestSize = (containerSize: Size, mediaSize: Size, padding = 0): Size => {
+	const hScale = (containerSize.height - padding) / mediaSize.height;
+	const wScale = (containerSize.width - padding) / mediaSize.width;
 	const scale = Math.min(hScale, wScale);
 	return {
 		width: mediaSize.width * scale,
