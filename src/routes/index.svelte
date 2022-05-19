@@ -1,6 +1,6 @@
 <script lang="ts">
 	import FileUpload from '../components/FileUpload.svelte';
-	import TimelineEditor from '../components/TimelineEditor.svelte';
+	import Editor from '../components/Editor.svelte';
 	import { getVideoDetails, type VideoDetails } from '../helpers/mediaHelpers';
 
 	let videoUrl: string | null = null;
@@ -25,7 +25,7 @@
 	{#await videoDetailsPromise}
 		<p>Loading video details</p>
 	{:then videoDetails}
-		<TimelineEditor {videoUrl} {videoDetails} />
+		<Editor {videoUrl} {videoDetails} />
 	{:catch error}
 		<p>Something went wrong {error.message}</p>
 		<button type="button" class="button" on:click={discardVideo}>Retry upload?</button>
