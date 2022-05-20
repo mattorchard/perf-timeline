@@ -23,7 +23,7 @@
 
 {#if videoUrl && videoDetailsPromise}
 	{#await videoDetailsPromise}
-		<p>Loading video details</p>
+		<p class="loading-message">Loading video details</p>
 	{:then videoDetails}
 		<Editor {videoUrl} {videoDetails} />
 	{:catch error}
@@ -31,16 +31,53 @@
 		<button type="button" class="button" on:click={discardVideo}>Retry upload?</button>
 	{/await}
 {:else}
-	<section class="upload-section">
-		<FileUpload onFile={handleNewVideo} />
-	</section>
+	<div class="welcome">
+		<section class="upload-section">
+			<h2>Perf Timeline</h2>
+			<FileUpload onFile={handleNewVideo} />
+		</section>
+		<footer>
+			Made with TypeScript, Svelte, and
+			<a href="https://fontawesome.com/" target="_blank" rel="noopener noreferrer">FontAwesome </a>
+			by
+			<a
+				href="https://github.com/mattorchard/perf-timeline"
+				target="_blank"
+				rel="noopener noreferrer">Matthew Orchard</a
+			>
+		</footer>
+	</div>
 {/if}
 
 <style>
-	.upload-section {
-		min-height: 80vh;
+	.welcome {
+		min-height: 100vh;
 		display: flex;
+		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+	}
+	.upload-section {
+		margin: auto;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+	h2 {
+		font-size: 3rem;
+		margin-bottom: 1rem;
+	}
+	a:visited {
+		color: inherit;
+	}
+	footer {
+		align-self: flex-end;
+		padding: 0.5rem;
+	}
+	.loading-message {
+		min-height: 100vh;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 </style>
