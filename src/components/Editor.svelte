@@ -55,7 +55,9 @@
 	}
 	.video-shrinker {
 		margin: auto;
-		overflow: hidden;
+		box-sizing: content-box;
+		border: 0.5rem solid var(--color-dark);
+		border-radius: 0.5rem;
 	}
 
 	.timeline-container {

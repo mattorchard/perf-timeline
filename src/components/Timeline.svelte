@@ -10,9 +10,9 @@
 		type ActionMarker
 	} from '../stores/TimelineStore';
 
-	import { formatTime } from '../helpers/timeHelpers';
 	import EventMarker from './EventMarker.svelte';
 	import MarkerDeltaBounds from './MarkerDeltaBounds.svelte';
+	import Toolbar from './Toolbar.svelte';
 
 	export let duration: number;
 	export let currentTime: number;
@@ -21,10 +21,9 @@
 	let scrollContainer: HTMLDivElement | null = null;
 	let windowWidth = 0;
 
-	let zoomExponent = 2;
-	let zoom = 10 ** zoomExponent;
+	let zoom = 10 ** 2;
 
-	function onZoomExponentChange() {
+	function onZoomExponentChange(zoomExponent: number) {
 		const newZoom = 10 ** zoomExponent;
 
 		if (scrollContainer) {
@@ -36,12 +35,18 @@
 		zoom = newZoom;
 	}
 
-	$: zoomExponent, onZoomExponentChange();
+	function scrollTo(time: number) {
+		if (!scrollContainer) return;
+		const zoomOffset = windowWidth / 2;
+		scrollContainer.scrollTo({ left: zoom * time - zoomOffset, behavior: 'smooth' });
+	}
 
 	let scrollX = 0;
 	let pointerClientX = 0;
 
 	$: pointerTime = (scrollX + pointerClientX) / zoom;
+
+	let markerTimesEnabled = true;
 
 	let depressedMarker: ActionMarker | null = null;
 	let depressedMarkerIndex: number | null;
@@ -71,26 +76,20 @@
 	$: barSpacing = getBarSpacing(zoom);
 </script>
 
-<div class="timeline" style="--zoom:{zoom}; --duration:{duration}; --bar-spacing:{barSpacing}">
-	<dl class="toolbar">
-		<dt>Zoom</dt>
-		<dd>
-			<input type="range" min={0.1} step={0.1} max={4} bind:value={zoomExponent} />
-		</dd>
-		<dt>Actions</dt>
-		<dd>
-			<button
-				type="button"
-				class="button"
-				on:click={() => {
-					const name = window.prompt('Event Name');
-					if (name) addMarker(name, currentTime);
-				}}>Add Event</button
-			>
-		</dd>
-		<dt>Time at Cursor</dt>
-		<dd>{formatTime(pointerTime)}</dd>
-	</dl>
+<div
+	class="timeline"
+	style="
+	--zoom:{zoom};
+	--duration:{duration};
+	--bar-spacing:{barSpacing}"
+>
+	<Toolbar
+		{onZoomExponentChange}
+		{currentTime}
+		{markerTimesEnabled}
+		onMarkerTimesEnabledChange={(enabled) => (markerTimesEnabled = enabled)}
+		onScrollToPlayhead={() => scrollTo(currentTime)}
+	/>
 	<div
 		class="ticker-scroll"
 		style="--pointer-time: {pointerTime}"
@@ -99,7 +98,15 @@
 		on:pointermove={(e) => (pointerClientX = e.clientX)}
 		on:pointerup={() => onSeek(pointerTime)}
 	>
-		<div class="ticker-tape" style="--marker-count: {$markers.length}">
+		<div
+			class="ticker-tape"
+			style="--marker-count: {$markers.length}"
+			on:dblclick={(e) => {
+				if (e.target !== e.currentTarget) return;
+				const name = window.prompt('Marker Name')?.trim();
+				if (name) addMarker(name, pointerTime);
+			}}
+		>
 			<div class="playhead" style="--time: {currentTime}" />
 
 			{#each $markers as marker, index}
@@ -107,6 +114,7 @@
 					<EventMarker
 						name={marker.name}
 						time={marker.time}
+						showTime={markerTimesEnabled}
 						on:click={() => onSeek(marker.time)}
 						on:dblclick={() => {
 							const name = window.prompt('New name');
@@ -173,16 +181,7 @@
 		display: flex;
 		flex-direction: column;
 	}
-	.toolbar {
-		background-color: var(--color-dark);
-		display: grid;
-		grid-auto-flow: column;
-		grid-template:
-			'zoomLabel actionsLabel infoLabel'
-			'zoom actions info';
-		padding: 0.5rem;
-		align-items: center;
-	}
+
 	.ticker-scroll {
 		overflow-x: scroll;
 		max-width: 100%;
@@ -198,6 +197,7 @@
 		transition: height var(--trans);
 	}
 	.playhead {
+		pointer-events: none;
 		position: absolute;
 		top: 0;
 		bottom: 0;

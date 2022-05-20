@@ -10,6 +10,7 @@
 
 	export let name: string;
 	export let time: number;
+	export let showTime: boolean;
 </script>
 
 <button
@@ -37,7 +38,9 @@
 	}}
 >
 	<em aria-label="Name" class="marker-name">{name}</em>
-	<span aria-label="Time">{formatTime(time)}</span>
+	{#if showTime}
+		<span aria-label="Time">{formatTime(time)}</span>
+	{/if}
 </button>
 
 <style>
