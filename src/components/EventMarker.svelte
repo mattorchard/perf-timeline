@@ -75,6 +75,9 @@
 	.event-marker:hover {
 		filter: brightness(1.15);
 	}
+	.marker-name {
+		white-space: nowrap;
+	}
 	.event-marker:active {
 		filter: brightness(0.85);
 	}
