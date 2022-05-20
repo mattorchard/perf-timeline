@@ -1,11 +1,17 @@
 <script lang="ts">
 	export let videoUrl: string;
+	export let paused: boolean;
 	export let onCurrentTimeChange: (time: number) => void;
 
+	let video: HTMLVideoElement;
 	let currentTime = 0;
 
-	$: {
-		onCurrentTimeChange(currentTime);
+	$: onCurrentTimeChange(currentTime);
+
+	$: paused ? video?.pause() : video?.play();
+
+	function togglePause() {
+		paused = !paused;
 	}
 
 	export function seekTo(time: number) {
@@ -18,8 +24,17 @@
 	muted
 	playsinline
 	bind:currentTime
-	on:click={({ currentTarget }) =>
-		currentTarget.paused ? currentTarget.play() : currentTarget.pause()}
+	bind:this={video}
+	on:click={togglePause}
+	on:keydown={({ key }) => {
+		switch (key) {
+			case ' ':
+			case 'Enter':
+				togglePause();
+				break;
+		}
+	}}
+	tabindex="0"
 />
 
 <style>

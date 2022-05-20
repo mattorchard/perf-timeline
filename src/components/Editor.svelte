@@ -7,11 +7,15 @@
 	export let videoDetails: VideoDetails;
 
 	let video: ControlledVideo;
+	let paused = true;
 
 	let currentTime = 0;
 
 	let videoContainerSize = { width: 0, height: 0 };
-	$: videoShrinkerSize = getBestSize(videoContainerSize, videoDetails, 32);
+	$: videoShrinkerSize = getBestSize(videoContainerSize, videoDetails, {
+		paddingX: 32,
+		paddingY: 32
+	});
 </script>
 
 <main>
@@ -22,10 +26,12 @@
 	>
 		<div
 			class="video-shrinker"
+			class:paused
 			style="width:{videoShrinkerSize.width}px; height:{videoShrinkerSize.height}px"
 		>
 			<ControlledVideo
 				bind:this={video}
+				bind:paused
 				{videoUrl}
 				onCurrentTimeChange={(t) => (currentTime = t)}
 			/>
@@ -34,9 +40,11 @@
 
 	<div class="timeline-container">
 		<Timeline
-			duration={videoDetails.duration}
 			{currentTime}
+			{paused}
+			duration={videoDetails.duration}
 			onSeek={(time) => video.seekTo(time)}
+			onPausedChanged={(p) => (paused = p)}
 		/>
 	</div>
 </main>
@@ -56,8 +64,13 @@
 	.video-shrinker {
 		margin: auto;
 		box-sizing: content-box;
-		border: 0.5rem solid var(--color-dark);
+		border: 0.5rem solid var(--color-light);
 		border-radius: 0.5rem;
+		transition: border-color var(--trans);
+	}
+
+	.video-shrinker.paused {
+		border: 0.5rem solid var(--color-dark);
 	}
 
 	.timeline-container {

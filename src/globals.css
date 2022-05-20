@@ -157,9 +157,6 @@ button:enabled {
 .switch:active::after {
 	background-color: var(--color-lighter);
 }
-.switch:focus-visible::before {
-	box-shadow: 0 0 0 0.125rem var(--color-text);
-}
 
 .fa-icon {
 	width: 1em;
@@ -173,6 +170,11 @@ button:enabled {
 	display: inline-block;
 	width: 1.625rem;
 	height: 1.625rem;
+	transition: none var(--trans);
+	transition-property: background-color, border-color, filter;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .icon-button:hover {

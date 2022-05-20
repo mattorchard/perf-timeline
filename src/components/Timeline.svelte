@@ -16,7 +16,9 @@
 
 	export let duration: number;
 	export let currentTime: number;
+	export let paused: boolean;
 	export let onSeek: (time: number) => void;
+	export let onPausedChanged: (paused: boolean) => void;
 
 	let scrollContainer: HTMLDivElement | null = null;
 	let windowWidth = 0;
@@ -87,6 +89,8 @@
 		{onZoomExponentChange}
 		{currentTime}
 		{markerTimesEnabled}
+		{paused}
+		{onPausedChanged}
 		onMarkerTimesEnabledChange={(enabled) => (markerTimesEnabled = enabled)}
 		onScrollToPlayhead={() => scrollTo(currentTime)}
 	/>

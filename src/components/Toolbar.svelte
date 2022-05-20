@@ -3,12 +3,17 @@
 	import FaArrowsLeftRight from './Icons/FaArrowsLeftRight.svelte';
 	import FaMagnifyingGlassMinus from './Icons/FaMagnifyingGlassMinus.svelte';
 	import FaMagnifyingGlassPlus from './Icons/FaMagnifyingGlassPlus.svelte';
+	import FaPause from './Icons/FaPause.svelte';
+	import FaPlay from './Icons/FaPlay.svelte';
 	import FaPlus from './Icons/FaPlus.svelte';
+
 	export let currentTime: number;
 	export let markerTimesEnabled: boolean;
+	export let paused: boolean;
 	export let onMarkerTimesEnabledChange: (enabled: boolean) => void;
 	export let onZoomExponentChange: (zoomExponent: number) => void;
 	export let onScrollToPlayhead: () => void;
+	export let onPausedChanged: (paused: boolean) => void;
 
 	let zoomExponent = 2;
 
@@ -18,6 +23,47 @@
 <fieldset class="toolbar">
 	<div class="toolbar__content">
 		<legend class="sr-only">Toolbar</legend>
+
+		<button
+			type="button"
+			class="button"
+			on:click={() => {
+				const name = window.prompt('Event Name')?.trim();
+				if (name) addMarker(name, currentTime);
+			}}
+		>
+			<FaPlus />
+			Add Marker</button
+		>
+
+		<button type="button" class="button" on:click={onScrollToPlayhead}>
+			<FaArrowsLeftRight />
+			Scroll to Playhead
+		</button>
+
+		<button
+			type="button"
+			class="play-button button"
+			title={paused ? 'Play' : 'Pause'}
+			on:click={() => onPausedChanged(!paused)}
+		>
+			{#if paused}
+				<FaPlay />
+			{:else}
+				<FaPause />
+			{/if}
+		</button>
+
+		<label>
+			Marker Times
+			<input
+				type="checkbox"
+				class="switch"
+				checked={markerTimesEnabled}
+				title={markerTimesEnabled ? 'Show' : 'Hide'}
+				on:change={(e) => onMarkerTimesEnabledChange(e.currentTarget.checked)}
+			/>
+		</label>
 
 		<div role="group" class="zoom-bar" title="Zoom">
 			<button
@@ -45,34 +91,6 @@
 				<FaMagnifyingGlassPlus />
 			</button>
 		</div>
-
-		<button
-			type="button"
-			class="button"
-			on:click={() => {
-				const name = window.prompt('Event Name')?.trim();
-				if (name) addMarker(name, currentTime);
-			}}
-		>
-			<FaPlus />
-			Add Marker</button
-		>
-
-		<button type="button" class="button" on:click={onScrollToPlayhead}>
-			<FaArrowsLeftRight />
-			Scroll to Playhead
-		</button>
-
-		<label>
-			Marker Times
-			<input
-				type="checkbox"
-				class="switch"
-				checked={markerTimesEnabled}
-				title={markerTimesEnabled ? 'Show' : 'Hide'}
-				on:change={(e) => onMarkerTimesEnabledChange(e.currentTarget.checked)}
-			/>
-		</label>
 	</div>
 </fieldset>
 
@@ -94,5 +112,11 @@
 	.zoom-bar {
 		display: flex;
 		align-items: center;
+		gap: 0.25rem;
+	}
+	.play-button {
+		font-size: 2rem;
+		border-radius: var(--pill);
+		width: 3.25rem;
 	}
 </style>
